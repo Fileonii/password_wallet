@@ -1,4 +1,5 @@
 import { ArrayNotEmpty, IsNotEmpty } from 'class-validator';
+import { PasswordType } from 'src/auth/crypto-functions';
 
 export class UpdateEncryptionKeyDto {
   @IsNotEmpty()
@@ -6,5 +7,5 @@ export class UpdateEncryptionKeyDto {
   @IsNotEmpty()
   newPassword: string;
   @IsNotEmpty()
-  pswdType: string;
+  passwordType: PasswordType;
 }

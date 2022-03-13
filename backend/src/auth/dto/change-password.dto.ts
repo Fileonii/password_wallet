@@ -1,5 +1,5 @@
-import { IsString, Matches, MaxLength, MinLength } from "class-validator";
-
+import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { PasswordType } from '../crypto-functions';
 export class ChangePasswordDto {
   @IsString()
   @MinLength(8)
@@ -9,4 +9,5 @@ export class ChangePasswordDto {
       'Hasło musi zawierać conajmniej jedną wielką literę i znak specjalny',
   })
   password: string;
+  passwordType: PasswordType;
 }

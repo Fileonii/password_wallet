@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { PasswordType } from './crypto-functions';
 
 @Entity()
 export class User {
@@ -19,5 +20,7 @@ export class User {
   @OneToMany(() => Password, (password) => password.user, { eager: true })
   password: Password[];
   @Column()
-  passwordType:string
+  passwordType: PasswordType;
+  @Column({ nullable: true })
+  salt?: string;
 }
