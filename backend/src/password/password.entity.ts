@@ -9,9 +9,7 @@ export class Password {
   @Column()
   service: string;
   @Column()
-  hashedPassword: string;
-  @Column()
-  pswdType: string;
+  encryptedPassword: string;
   @ManyToOne(() => User, (user) => user.password, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
