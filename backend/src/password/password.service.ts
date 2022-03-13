@@ -20,12 +20,14 @@ export class PasswordService {
   ) {}
 
    encryptPassword(data: string, key: string): string  {
-      const cipher = crypto.createCipheriv('aes-128-cbc', Buffer.from(calculateMD5(key), "hex"), Buffer.from(INITIALIZATION_VECTOR));
+    const md = calculateMD5(key)
+      const cipher = crypto.createCipheriv('aes-128-cbc', Buffer.from(md, "hex"), Buffer.from(INITIALIZATION_VECTOR));
       return cipher.update(data, "utf8", "hex") + cipher.final("hex");
   }
 
   decryptPassword(encryptedData: string, key: string): string {
-      const cipher = crypto.createDecipheriv('aes-128-cbc', Buffer.from(calculateMD5(key), "hex"), Buffer.from(INITIALIZATION_VECTOR));
+      const md = calculateMD5(key)
+      const cipher = crypto.createDecipheriv('aes-128-cbc', Buffer.from(md, "hex"), Buffer.from(INITIALIZATION_VECTOR));
       return cipher.update(encryptedData, 'hex', 'utf8') + cipher.final('utf8');
   }
 
@@ -42,7 +44,7 @@ export class PasswordService {
         service: body.service,
         encryptedPassword: this.encryptPassword(
           body.hashedPassword,
-          'SECRETKEY'
+          user.passwordAccount
         ),
         user: user,
       });
