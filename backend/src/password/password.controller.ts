@@ -36,11 +36,11 @@ export class PasswordController {
     return this.passwordService.createNewPassword(body, user);
   }
 
-  @Get('/:passwordId')
+  @Get('/:id')
   async getDecryptedPassword(
-    @Param() passwordId,
+    @Param() id,
     @GetUser() user: User
   ): Promise<Password> {
-    return this.passwordService.getDecryptedPassword(passwordId, user);
+    return this.passwordService.getDecryptedPassword(id, user);
   }
 }

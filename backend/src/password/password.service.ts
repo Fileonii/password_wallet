@@ -5,10 +5,12 @@ import internal from 'stream';
 import { Repository } from 'typeorm';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { Password } from './password.entity';
+import { calculateMD5 } from '../auth/crypto-functions'
 import * as crypto from 'crypto';
 
-const ENCRYPTION_TYPE = 'aes-128-ccm';
-const INIT_VEC = '0000000000000000';
+const ENCRYPTION_TYPE = 'aes-128-cbc';
+const INITIALIZATION_VECTOR = '0000000000000000';
+const iv = Buffer.from('aeghei1Di8tieNg0');
 
 @Injectable()
 export class PasswordService {
@@ -17,22 +19,14 @@ export class PasswordService {
     private passwordRepository: Repository<Password>
   ) {}
 
-  encryptPassword(password: string, key: string): string {
-    const cipher = crypto.createCipheriv(
-      ENCRYPTION_TYPE,
-      Buffer.from(key, 'hex'),
-      Buffer.from(INIT_VEC)
-    );
-    return cipher.update(password, 'utf8', 'hex') + cipher.final('hex');
+   encryptPassword(data: string, key: string): string  {
+      const cipher = crypto.createCipheriv('aes-128-cbc', Buffer.from(calculateMD5(key), "hex"), Buffer.from(INITIALIZATION_VECTOR));
+      return cipher.update(data, "utf8", "hex") + cipher.final("hex");
   }
 
-  decryptPassword(password: string, key: string): string {
-    const cipher = crypto.createDecipheriv(
-      ENCRYPTION_TYPE,
-      Buffer.from(key, 'hex'),
-      Buffer.from(INIT_VEC)
-    );
-    return cipher.update(password, 'hex', 'utf8') + cipher.final('utf8');
+  decryptPassword(encryptedData: string, key: string): string {
+      const cipher = crypto.createDecipheriv('aes-128-cbc', Buffer.from(calculateMD5(key), "hex"), Buffer.from(INITIALIZATION_VECTOR));
+      return cipher.update(encryptedData, 'hex', 'utf8') + cipher.final('utf8');
   }
 
   getAllPasswords(user: User): Promise<Password[]> {
