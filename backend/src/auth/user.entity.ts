@@ -8,6 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { PasswordType } from './crypto-functions';
 
 @Entity()
 export class User {
@@ -23,5 +24,7 @@ export class User {
   password: Password[];
   @ApiProperty({ example: "sha-256", description: "Method of hashing"})
   @Column()
-  passwordType:string
+  passwordType: PasswordType;
+  @Column({ nullable: true })
+  salt?: string;
 }

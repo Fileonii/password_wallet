@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { ArrayNotEmpty, IsNotEmpty } from 'class-validator';
+import { PasswordType } from 'src/auth/crypto-functions';
 
 export class UpdateEncryptionKeyDto {
   @IsNotEmpty()
@@ -10,5 +11,5 @@ export class UpdateEncryptionKeyDto {
   newPassword: string;
   @ApiProperty({ example: "sha-256", description: "Method of hashing"})
   @IsNotEmpty()
-  pswdType: string;
+  passwordType: PasswordType;
 }

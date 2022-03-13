@@ -1,4 +1,5 @@
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { PasswordType } from '../crypto-functions';
 
 export class AuthCretendialsDto {
   @IsString()
@@ -11,5 +12,5 @@ export class AuthCretendialsDto {
       'Hasło musi zawierać conajmniej jedną wielką literę i znak specjalny',
   })
   password: string;
-  passwordType:string;
+  passwordType: PasswordType;
 }

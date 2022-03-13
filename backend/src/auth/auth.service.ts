@@ -6,6 +6,12 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { User } from './user.entity';
+import {
+  calculateHMAC,
+  calculateSha512,
+  generateSalt,
+  PasswordType,
+} from './crypto-functions';
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,10 +27,16 @@ export class AuthService {
   async signIn(
     authCretendialsDto: AuthCretendialsDto
   ): Promise<{ accessToken: string }> {
-    const { username, password } = authCretendialsDto;
+    const { username, password, passwordType } = authCretendialsDto;
     const user = await this.userRepository.findOne({ username });
-
-    if (user && (await bcrypt.compare(password, user.passwordAccount))) {
+    let hashedPassword: string;
+    if (passwordType == PasswordType.TYPE_HMAC) {
+      hashedPassword = calculateHMAC(password, 'SECRETKEY');
+    }
+    if (passwordType == PasswordType.TYPE_SHA) {
+      hashedPassword = calculateSha512(password, user.salt, 'SECRETKEY');
+    }
+    if (user && hashedPassword === user.passwordAccount) {
       const payload: JwtPayload = { username };
       const accessToken: string = await this.jwtService.sign(payload);
       return { accessToken };
@@ -32,7 +44,7 @@ export class AuthService {
       throw new UnauthorizedException('Nieprawidłowe dane logowania');
     }
   }
-  async changePassword(authCretendialsDto: AuthCretendialsDto){
+  async changePassword(authCretendialsDto: AuthCretendialsDto) {
     return this.userRepository.changePassword(authCretendialsDto);
   }
 }

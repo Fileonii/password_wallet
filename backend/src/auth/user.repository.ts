@@ -7,14 +7,32 @@ import { EntityRepository, Repository } from 'typeorm';
 import { AuthCretendialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import {
+  calculateHMAC,
+  calculateSha512,
+  generateSalt,
+  PasswordType,
+} from './crypto-functions';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async createUser(authCrdentialsDto: AuthCretendialsDto): Promise<void> {
-    const { username, password } = authCrdentialsDto;
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const user = this.create({ username, passwordAccount: hashedPassword });
+  async createUser(authCretendialsDto: AuthCretendialsDto): Promise<void> {
+    const { username, password, passwordType } = authCretendialsDto;
+    let hashedPassword: string;
+    let salt: string = null;
+    if (passwordType == PasswordType.TYPE_HMAC) {
+      hashedPassword = calculateHMAC(password, 'SECRETKEY');
+    }
+    if (passwordType == PasswordType.TYPE_SHA) {
+      salt = generateSalt();
+      hashedPassword = calculateSha512(password, salt, 'SECRETKEY');
+    }
+    const user = this.create({
+      username: username,
+      passwordAccount: hashedPassword,
+      passwordType: passwordType,
+      salt: salt,
+    });
     try {
       await this.save(user);
     } catch (error) {
@@ -25,11 +43,18 @@ export class UserRepository extends Repository<User> {
       }
     }
   }
-  async changePassword(authCretendialsDto: AuthCretendialsDto){
-    const { username, password } = authCretendialsDto;
+  async changePassword(authCretendialsDto: AuthCretendialsDto) {
+    const { username, password, passwordType } = authCretendialsDto;
     const user = await this.findOne({ username });
-    const salt = await bcrypt.genSalt();
-    user.passwordAccount = await bcrypt.hash(password, salt);
+    if (passwordType == PasswordType.TYPE_HMAC) {
+      user.passwordType = passwordType;
+      user.passwordAccount = calculateHMAC(password, 'SECRETKEY');
+    }
+    if (passwordType == PasswordType.TYPE_SHA) {
+      user.passwordType = passwordType;
+      const salt = generateSalt();
+      user.passwordAccount = calculateSha512(password, salt, 'SECRETKEY');
+    }
     await this.save(user);
   }
 }
