@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder, SwaggerCustomOptions } from '@nestjs/swagger';
 
 async function bootstrap() {
   const PORT = 4000;
@@ -20,11 +20,22 @@ async function bootstrap() {
   
   const swaggerConfig = new DocumentBuilder()
       .setTitle('Password wallet')
-      .setDescription('The API')
+      .setDescription('Application for password management')
       .setVersion('1.0')
+      .addBearerAuth(
+        { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        'access-token',
+      )
       .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: true,
+      deepScanRoutes: true
+    },
+  };
+  const document = SwaggerModule.createDocument(app, swaggerConfig );
+  SwaggerModule.setup('api', app, document, customOptions);
 
   await app.listen(PORT);
 }

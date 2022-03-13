@@ -60,9 +60,8 @@ export class AuthController {
     const body :AuthCretendialsDto = {
       username:user.username,
       password:changePasswordDto.password,
+      passwordType: changePasswordDto.passwordType
     }
     return this.authService.changePassword(body);
   }
-  // @Get('/password')
-  // @UseGuards()
 }
