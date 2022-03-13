@@ -43,18 +43,10 @@ export class UserRepository extends Repository<User> {
       }
     }
   }
-  async changePassword(authCretendialsDto: AuthCretendialsDto) {
+  async changePassword(authCretendialsDto: AuthCretendialsDto, salt: string) {
     const { username, password, passwordType } = authCretendialsDto;
     const user = await this.findOne({ username });
-    if (passwordType == PasswordType.TYPE_HMAC) {
-      user.passwordType = passwordType;
-      user.passwordAccount = calculateHMAC(password, 'SECRETKEY');
-    }
-    if (passwordType == PasswordType.TYPE_SHA) {
-      user.passwordType = passwordType;
-      const salt = generateSalt();
-      user.passwordAccount = calculateSha512(password, salt, 'SECRETKEY');
-    }
+    user.salt = salt;
     await this.save(user);
   }
 }

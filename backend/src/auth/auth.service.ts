@@ -12,6 +12,8 @@ import {
   generateSalt,
   PasswordType,
 } from './crypto-functions';
+import { Password } from 'src/password/password.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class AuthService {
   constructor(
@@ -44,7 +46,7 @@ export class AuthService {
       throw new UnauthorizedException('Nieprawidłowe dane logowania');
     }
   }
-  async changePassword(authCretendialsDto: AuthCretendialsDto) {
-    return this.userRepository.changePassword(authCretendialsDto);
+  async changePassword(authCretendialsDto: AuthCretendialsDto, salt: string) {
+    return this.userRepository.changePassword(authCretendialsDto, salt);
   }
 }

@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
 import { CreatePasswordDto } from './dto/create-password.dto';
-import { UpdateEncryptionKeyDto } from "./dto/update-encryption-key.dto"
+import { UpdateEncryptionKeyDto } from './dto/update-encryption-key.dto';
 import { Password } from './password.entity';
 import { PasswordService } from './password.service';
 
@@ -17,21 +26,10 @@ export class PasswordController {
     return this.passwordService.getAllPasswords(user);
   }
 
-  @Put()
-  async updateEncryptionKey(
-    @Body() body: UpdateEncryptionKeyDto,
-    @GetUser() user: User): Promise<void> {
-      
-      const newPasswordHashed = body.newPassword // TODO: hash new password
-      await this.passwordService.updateUserEncryptionKey(newPasswordHashed, user);
-      // save body.newPassword 
-      return
-  }
-
   @Post()
   async createNewPassword(
     @Body() body: CreatePasswordDto,
-    @GetUser() user: User,
+    @GetUser() user: User
   ): Promise<Password> {
     return this.passwordService.createNewPassword(body, user);
   }
