@@ -4,7 +4,7 @@ import {
   Injectable,
   CallHandler,
 } from '@nestjs/common';
-import { classToPlain, instanceToPlain } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 import { map } from 'rxjs/operators';
 
 @Injectable()

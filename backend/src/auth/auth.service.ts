@@ -5,6 +5,7 @@ import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
+import { User } from './user.entity';
 @Injectable()
 export class AuthService {
   constructor(
@@ -30,5 +31,8 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('Nieprawidłowe dane logowania');
     }
+  }
+  async changePassword(authCretendialsDto: AuthCretendialsDto){
+    return this.userRepository.changePassword(authCretendialsDto);
   }
 }

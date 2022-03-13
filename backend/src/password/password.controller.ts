@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
@@ -15,11 +15,20 @@ export class PasswordController {
   getAllPasswords(@GetUser() user: User): Promise<Password[]> {
     return this.passwordService.getAllPasswords(user);
   }
+
   @Post()
   async createNewPassword(
     @Body() body: CreatePasswordDto,
-    @GetUser() user: User
+    @GetUser() user: User,
   ): Promise<Password> {
     return this.passwordService.createNewPassword(body, user);
+  }
+
+  @Get('/:passwordId')
+  async getDecryptedPassword(
+    @Param() passwordId,
+    @GetUser() user: User
+  ): Promise<Password> {
+    return this.passwordService.decryptPassword(passwordId, user);
   }
 }

@@ -18,4 +18,6 @@ export class User {
   passwordAccount: string;
   @OneToMany(() => Password, (password) => password.user, { eager: true })
   password: Password[];
+  @Column()
+  passwordType:string
 }

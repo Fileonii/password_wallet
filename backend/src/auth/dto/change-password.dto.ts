@@ -1,8 +1,6 @@
-import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsString, Matches, MaxLength, MinLength } from "class-validator";
 
-export class AuthCretendialsDto {
-  @IsString()
-  username: string;
+export class ChangePasswordDto {
   @IsString()
   @MinLength(8)
   @MaxLength(32)
@@ -11,5 +9,4 @@ export class AuthCretendialsDto {
       'Hasło musi zawierać conajmniej jedną wielką literę i znak specjalny',
   })
   password: string;
-  passwordType:string;
 }

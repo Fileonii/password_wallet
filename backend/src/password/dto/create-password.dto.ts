@@ -5,4 +5,6 @@ export class CreatePasswordDto {
   service: string;
   @IsNotEmpty()
   hashedPassword: string;
+  @IsNotEmpty()
+  pswdType: string;
 }
